@@ -1,7 +1,9 @@
-export default function Title() {
+import { ReactNode } from "react";
+
+export default function Title({ children }: { children: ReactNode }) {
   return (
     <div className="mt-4 border-b pb-6">
-      <h1 className="font-bold text-6xl">Milesstone Grill</h1>
+      <h1 className="font-bold text-6xl">{children}</h1>
     </div>
   );
 }

@@ -18,7 +18,7 @@ export default function Price({ price }: { price: PRICE }) {
       );
     }
 
-    return <span className="text-gray-400">$$$$</span>;
+    return <span>$$$$</span>;
   };
   return <p className="flex mr-3 justify-between">{renderPrice()}</p>;
 }
