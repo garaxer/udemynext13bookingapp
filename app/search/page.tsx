@@ -21,6 +21,7 @@ const findRestaurants = async ({
     cuisine: true,
     location: true,
     slug: true,
+    reviews: true,
   };
 
   const restaurants = await prisma.restaurant.findMany({
