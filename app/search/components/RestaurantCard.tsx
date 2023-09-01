@@ -1,6 +1,7 @@
-import Price from "@/app/components/Price";
-import { renderRatingText } from "@/utils/reviews";
 import { Cuisine, Location, PRICE, Review } from "@prisma/client";
+import Price from "@/app/components/Price";
+import Stars from "@/app/components/Stars";
+import { renderRatingText } from "@/utils/reviews";
 import Link from "next/link";
 
 export type RestaurantCardType = {
@@ -14,9 +15,10 @@ export type RestaurantCardType = {
   reviews: Review[];
   slug: string;
 };
-type RestaurantCardProps = {
+export type RestaurantCardProps = {
   restaurant: RestaurantCardType;
 };
+
 export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   return (
     <div className="border-b flex pb-5 ml-5">
@@ -24,8 +26,13 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
       <div className="pl-5">
         <h2 className="text-3xl">{restaurant.name}</h2>
         <div className="flex items-start">
-          <div className="flex mb-2">*****</div>
-          <p className="ml-2 text-sm"> {renderRatingText(restaurant.reviews)}</p>
+          <div className="flex mb-2">
+            <Stars reviews={restaurant.reviews} />
+          </div>
+          <p className="ml-2 text-sm">
+            {" "}
+            {renderRatingText(restaurant.reviews)}
+          </p>
         </div>
         <div className="mb-9">
           <div className="font-light flex text-reg">

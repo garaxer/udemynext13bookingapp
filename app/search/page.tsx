@@ -1,8 +1,9 @@
 import { PRICE, PrismaClient } from "@prisma/client";
 import Header from "./components/Header";
-import RestaurantCard, {
+import {
   RestaurantCardType,
 } from "./components/RestaurantCard";
+import RestaurantCard from "./components/RestaurantCard.1";
 import SearchSideBar from "./components/SearchSideBar";
 
 const prisma = new PrismaClient();

@@ -28,9 +28,10 @@ export function calculateReviewRatingAverage(reviews: Review[]) {
 
 export function renderRatingText(reviews: Review[]) {
   const rating = calculateReviewRatingAverage(reviews);
-
-  if (rating > 4) return "Awesome";
-  else if (rating > 3) return "Good";
-  else if (rating > 0) return "Average";
-  return "";
+  switch (true) {
+    case rating > 4: return "Awesome"
+    case rating > 3: return "Good"
+    case rating > 0: return "Average"
+    default: return ""
+  }
 }
