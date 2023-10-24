@@ -1,9 +1,8 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import AuthModalInputs from "./AuthModalInputs";
 
 const style = {
@@ -25,8 +24,18 @@ export default function AuthModal({ isSignIn = true }: { isSignIn: boolean }) {
   const handleClose = () => setOpen(false);
 
   const renderContent = (isSignInContent: string, isSignUpContent: string) =>
-    isSignIn ? isSignInContent : isSignInContent;
+    isSignIn ? isSignInContent : isSignUpContent;
+  const [inputs, setInputs] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    city: "",
+    password: "",
+  });
 
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) =>
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
   return (
     <div className="text-black">
       <button
@@ -57,7 +66,7 @@ export default function AuthModal({ isSignIn = true }: { isSignIn: boolean }) {
                   "Create your GazTable account"
                 )}
               </h2>
-              <AuthModalInputs />
+              <AuthModalInputs isSignIn={isSignIn} inputs={inputs} handleChangeInput={handleChangeInput} />
               <button className="uppercase bg-red-600 w-full text-white p-3 rounded text-sm mb-5 disabled:bg-gray-400">
                 {renderContent("Sign in", "Create account")}
               </button>
