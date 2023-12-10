@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import * as jose from "jose";
 
 const prisma = new PrismaClient();
 export async function GET(request: Request) {
@@ -71,6 +72,7 @@ export async function POST(request: Request) {
       errorMessage: "Email already exists on another account",
     });
   }
+
   const user = await prisma.user.create({
     data: {
       first_name: firstName,
@@ -81,5 +83,12 @@ export async function POST(request: Request) {
       city,
     },
   });
-  return NextResponse.json(user);
+  const alg = "HS256";
+  const secret = new TextEncoder().encode(process.env.JWTSECRET);
+  const token = await new jose.SignJWT({ email: user.email })
+    .setProtectedHeader({ alg })
+    .setExpirationTime("24h")
+    .sign(secret);
+
+  return NextResponse.json({ user, token });
 }
