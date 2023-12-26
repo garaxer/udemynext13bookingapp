@@ -1,42 +1,14 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import * as jose from "jose";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function GET() {
   const headersList = headers();
-  const bearerToken = headersList.get("authorization");
+  const bearerToken = headersList.get("authorization")?.split(" ")[1] as string;
 
-  if (!bearerToken) {
-    return NextResponse.json({
-      errorMessage: "No bearer",
-    });
-  }
-
-  const token = bearerToken.split(" ")[1];
-
-  if (!token) {
-    return NextResponse.json({
-      errorMessage: "No token",
-    });
-  }
-
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
-  try {
-    await jose.jwtVerify(token, secret);
-  } catch (error) {
-    return NextResponse.json(
-      {
-        errorMessage: "Unauthorized request (Token invalid)",
-      },
-      { status: 500 }
-    );
-  }
-
-  const decoded = jwt.decode(token) as {
+  const decoded = jwt.decode(bearerToken) as {
     email: string;
     exp: number;
   };
