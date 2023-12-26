@@ -54,7 +54,7 @@ export async function POST(request: Request) {
   }
 
   const alg = "HS256";
-  const secret = new TextEncoder().encode(process.env.JWTSECRET);
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
   const token = await new jose.SignJWT({ email: userWithEmail.email })
     .setProtectedHeader({ alg })
     .setExpirationTime("24h")
