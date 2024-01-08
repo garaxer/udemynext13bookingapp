@@ -34,7 +34,7 @@ export async function middleware(request: Request) {
     );
   }
 }
-
+ 
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: ["/api/auth/me"],
