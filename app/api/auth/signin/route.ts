@@ -3,10 +3,11 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import validator from "validator";
 import * as jose from "jose";
+import { setCookie } from "cookies-next";
 
 const prisma = new PrismaClient();
 
-export async function POST(request: Request) {
+export async function POST(request: Request, response: Response) {
   const errors: string[] = [];
   const { email, password } = await request.json();
 
@@ -33,19 +34,19 @@ export async function POST(request: Request) {
     });
   }
 
-  const userWithEmail = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       email,
     },
   });
 
-  if (!userWithEmail) {
+  if (!user) {
     return NextResponse.json({
       errorMessage: "Email or password is invalid",
     });
   }
 
-  const isMatch = await bcrypt.compare(password, userWithEmail.password);
+  const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
     return NextResponse.json({
@@ -55,10 +56,22 @@ export async function POST(request: Request) {
 
   const alg = "HS256";
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-  const token = await new jose.SignJWT({ email: userWithEmail.email })
+  const token = await new jose.SignJWT({ email: user.email })
     .setProtectedHeader({ alg })
     .setExpirationTime("24h")
     .sign(secret);
 
-  return NextResponse.json({ user: userWithEmail, token });
+  setCookie("jwt", token, {
+    req: request,
+    res: response,
+    maxAge: 60 * 6 * 24,
+  });
+
+  return NextResponse.json({
+    firstName: user.first_name,
+    lastName: user.first_name,
+    city: user.city,
+    email: user.email,
+    phone: user.phone,
+  });
 }

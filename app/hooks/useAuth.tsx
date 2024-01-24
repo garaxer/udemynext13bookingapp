@@ -3,13 +3,16 @@ import { useAuthContext } from "../context/AuthContext";
 
 const useAuth = () => {
   const { data, error, loading, setAuthState } = useAuthContext();
-  const signin = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
+  const signin = async (
+    {
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    },
+    handleClose: () => void
+  ) => {
     setAuthState({
       loading: true,
       data: null,
@@ -32,6 +35,7 @@ const useAuth = () => {
         data: data,
         error: null,
       });
+      handleClose();
     } catch (error: any) {
       console.error(error);
       setAuthState({
