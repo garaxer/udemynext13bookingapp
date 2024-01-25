@@ -32,9 +32,18 @@ export async function GET() {
       {
         errorMessage: "Unauthorized request (user not found)",
       },
-      { status: 500 }
+      { status: 401 }
     );
   }
 
-  return NextResponse.json(data, { status: 200 });
+  return NextResponse.json(
+    {
+      firstName: data.first_name,
+      lastName: data.last_name,
+      city: data.city,
+      email: data.email,
+      phone: data.phone,
+    },
+    { status: 200 }
+  );
 }
