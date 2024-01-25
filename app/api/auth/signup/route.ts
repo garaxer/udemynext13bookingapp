@@ -3,13 +3,14 @@ import { NextResponse } from "next/server";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import * as jose from "jose";
+import { cookies } from 'next/headers'
 
 const prisma = new PrismaClient();
 export async function GET(request: Request) {
   return NextResponse.json({ hello: "There" }, { status: 200 });
 }
 
-export async function POST(request: Request) {
+export async function POST(request: Request, response: Response) {
   const { firstName, lastName, email, phone, city, password } =
     await request.json();
 
@@ -90,5 +91,13 @@ export async function POST(request: Request) {
     .setExpirationTime("24h")
     .sign(secret);
 
-  return NextResponse.json({ user, token });
+    cookies().set('jwt', token, { maxAge: 60 * 6 * 24 })
+  
+    return NextResponse.json({
+      firstName: user.first_name,
+      lastName: user.last_name,
+      city: user.city,
+      email: user.email,
+      phone: user.phone,
+    });
 }

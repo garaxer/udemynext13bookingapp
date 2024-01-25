@@ -23,7 +23,6 @@ const style = {
 export default function AuthModal({ isSignIn = true }: { isSignIn: boolean }) {
   const { signin, signup } = useAuth();
   const { data, error, loading } = useAuthContext();
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -41,7 +40,6 @@ export default function AuthModal({ isSignIn = true }: { isSignIn: boolean }) {
 
   const [disabled, setDisabled] = useState(false);
 
-  console.log({ error });
   useEffect(() => {
     if (isSignIn) {
       if (inputs.password && inputs.email) {
@@ -60,6 +58,7 @@ export default function AuthModal({ isSignIn = true }: { isSignIn: boolean }) {
     if (isSignIn) {
       signin(inputs, handleClose);
     } else {
+      signup(inputs, handleClose);
     }
   };
 
@@ -73,7 +72,7 @@ export default function AuthModal({ isSignIn = true }: { isSignIn: boolean }) {
         } px-4 p-1 rounded mr-3`}
         onClick={handleOpen}
       >
-        {isSignIn ? "Sign in" : "Sign out"}
+        {isSignIn ? "Sign in" : "Sign up"}
       </button>
       <Modal
         open={open}
@@ -95,7 +94,11 @@ export default function AuthModal({ isSignIn = true }: { isSignIn: boolean }) {
               ) : null}
               <div className="uppercase font-bold text-center pb-2 border-b mb-2">
                 <p className="text-small">
-                  {isSignIn ? "Sign in" : "Create account like so"}
+                  {isSignIn ? "Sign in" : "Create account"}
+                </p>
+                <p>
+                  ss
+                  {data?.firstName}
                 </p>
               </div>
               <div className="m-auto">
