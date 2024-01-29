@@ -45,7 +45,7 @@ async function RestaurantDetails({ params }: { params: { slug: string } }) {
   const restaurant = await fetchRestaurantBySlug(params.slug);
   return (
     <>
-      <div className="bg-white w-[70%] rounded p-3 shadow">
+      <div className="bg-white lg:w-[70%] min-w-[450px] rounded p-3 shadow">
         <RestaurantNavBar slug={params.slug} />
         <Title>{restaurant.name}</Title>
         <Rating reviews={restaurant.reviews} />
@@ -53,7 +53,7 @@ async function RestaurantDetails({ params }: { params: { slug: string } }) {
         <Images images={restaurant.images} />
         <Reviews reviews={restaurant.reviews} />
       </div>
-      <div className="w-[27%] relative text-reg">
+      <div className="lg:w-[27%] lg:relative text-reg">
         <ReservationCard />
       </div>
     </>

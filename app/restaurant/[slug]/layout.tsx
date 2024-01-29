@@ -17,7 +17,7 @@ export default function RestaurantLayout({
   return (
     <>
       <Header name={params.slug} />
-      <div className="flex m-auto w-2/3 justify-between items-start 0 -mt-11">
+      <div className="flex gap-2 flex-col-reverse lg:flex-row m-auto lg:justify-around items-start 0 -mt-11">
         {children}
       </div>
     </>
