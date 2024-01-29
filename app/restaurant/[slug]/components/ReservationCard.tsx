@@ -5,8 +5,36 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function ReservationCard() {
+export default function ReservationCard({
+  openTime,
+  closeTime,
+}: {
+  openTime: string;
+  closeTime: string;
+}) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+
+  const filterTimeByRestaurantOpenWindow = () => {
+    // openTime ex: 14:30:00.000Z
+    // closeTime ex: 21:30:00.000Z
+    const timesInWindow: typeof times = [];
+
+    let isWithinWindow = false;
+
+    times.forEach((time) => {
+      if (time.time >= openTime) {
+        isWithinWindow = true;
+      }
+      if (isWithinWindow) {
+        timesInWindow.push(time);
+      }
+      if (time.time >= closeTime) {
+        isWithinWindow = false;
+      }
+    });
+
+    return timesInWindow;
+  };
   return (
     <div className="lg:fixed lg:w-[15%] min-w-[250px] bg-white rounded p-3 shadow">
       <div className="text-center border-b pb-2 font-bold">
@@ -36,7 +64,7 @@ export default function ReservationCard() {
         <div className="flex flex-col w-[48%]">
           <label htmlFor="">Time</label>
           <select name="" id="" className="py-3 border-b font-light">
-            {times.map((time) => (
+            {filterTimeByRestaurantOpenWindow().map((time) => (
               <option value={time.time} key={time.time}>
                 {time.displayTime}
               </option>
