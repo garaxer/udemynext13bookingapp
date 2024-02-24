@@ -67,6 +67,8 @@ export async function GET(
     },
     select: {
       tables: true,
+      open_time: true,
+      close_time: true,
     },
   });
 
@@ -95,22 +97,34 @@ export async function GET(
     });
   });
 
-  const availabilities = searchTimesWithTable.map((t) => {
-    const sumSeats = t.tables.reduce((sum, tables) => sum + tables.seats, 0);
-    return {
-      time: t.time,
-      available: sumSeats >= parseInt(partySize),
-    };
-  });
+  const availabilities = searchTimesWithTable
+    .map((t) => {
+      const sumSeats = t.tables.reduce((sum, tables) => sum + tables.seats, 0);
+      return {
+        time: t.time,
+        available: sumSeats >= parseInt(partySize),
+      };
+    })
+    .filter((availability) => {
+      const timeIsAfterOpeningHour =
+        new Date(`${day}T${availability.time}`) >=
+        new Date(`${day}T${restaurant.open_time}`);
+      const timeIsBeforeClosingHour =
+        new Date(`${day}T${availability.time}`) <=
+        new Date(`${day}T${restaurant.close_time}`);
+      return timeIsAfterOpeningHour && timeIsBeforeClosingHour;
+    });
 
-  return NextResponse.json({
-    searchTimes: searchTimes.searchTimes,
-    bookings,
-    bookingTablesObj,
-    tables,
-    searchTimesWithTable,
-    availabilities,
-  });
+  // return NextResponse.json({
+  //   searchTimes: searchTimes.searchTimes,
+  //   bookings,
+  //   bookingTablesObj,
+  //   tables,
+  //   searchTimesWithTable,
+  //   availabilities,
+  //   restaurant,
+  // });
+  return NextResponse.json({ availabilities });
 }
 
 // http://localhost:8069/api/restaurant/vivaan-fine-indian-cuisine-ottawa/availability?day=2023-01-01&time=20:00:00.000Z&partySize=4
