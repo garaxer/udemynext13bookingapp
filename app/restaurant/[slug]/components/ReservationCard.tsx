@@ -125,7 +125,7 @@ export default function ReservationCard({
           <p className="text-reg">Select a time</p>
           <div className="flex flex-wrap mt-2">
             {data.map((t) =>
-              t.time ? (
+              t.available ? (
                 <Link
                   href={`/reserve/${slug}?date=${day}T${t.time}&partySize=${partySize}`}
                   key={t.time}
