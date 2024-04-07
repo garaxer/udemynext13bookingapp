@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET(
+export async function POST(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
@@ -14,13 +14,24 @@ export async function GET(
   const time = searchParams.get("time");
   const partySize = searchParams.get("partySize");
 
+  const body = await request.json();
+  const {
+    bookerEmail,
+    bookerPhone,
+    bookerFirstName,
+    bookerLastName,
+    bookerOccasion,
+    bookerRequest,
+  } = body;
+
   const restaurant = await prisma.restaurant.findUnique({
     where: {
-      slug: params.slug,
+      slug,
     },
     select: {
       tables: true,
       open_time: true,
+      id: true,
       close_time: true,
     },
   });
@@ -72,6 +83,14 @@ export async function GET(
     4: [],
   };
 
+  searchTimeWithTables.tables.forEach((table) => {
+    if (table.seats === 2) {
+      tablesCount[2].push(table.id);
+    } else {
+      tablesCount[4].push(table.id);
+    }
+  });
+
   const tablesToBooks: number[] = [];
   let seatsRemaining = parseInt(partySize);
 
@@ -99,16 +118,39 @@ export async function GET(
     }
   }
 
-  searchTimeWithTables.tables.forEach((table) => {
-    if (table.seats === 2) {
-      tablesCount[2].push(table.id);
-    }
-    if (table.seats === 4) {
-      tablesCount[4].push(table.id);
-    }
+  const booking = await prisma.booking.create({
+    data: {
+      number_of_people: parseInt(partySize),
+      booking_time: new Date(`${day}T${time}`),
+      booker_email: bookerEmail,
+      booker_phone: bookerPhone,
+      booker_first_name: bookerFirstName,
+      booker_last_name: bookerLastName,
+      restaurant_id: restaurant.id,
+      booker_occasion: bookerOccasion,
+      booker_request: bookerRequest,
+    },
   });
 
-  return NextResponse.json({ tablesToBooks });
+  const bookingsOnTablesData = tablesToBooks.map((table_id) => {
+    return {
+      table_id,
+      booking_id: booking.id,
+    };
+  });
+  await prisma.bookingsOnTables.createMany({
+    data: bookingsOnTablesData,
+  });
+
+  return NextResponse.json(booking);
 }
 
 //http://localhost:8069/api/restaurant/vivaan-fine-indian-cuisine-ottawa/reserve?day=2023-02-03&time=16:00:00.000Z&partySize=4
+// {
+//   "bookerEmail": "gbagna@gmail.com",
+//   "bookerPhone": "2323333",
+//   "bookerFirstName": "g",
+//   "bookerLastName": "g",
+//   "bookerOccasion": "g",
+//   "bookerRequest": "g"
+// }
