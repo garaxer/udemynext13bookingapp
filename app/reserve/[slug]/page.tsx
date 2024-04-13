@@ -30,7 +30,7 @@ async function Reserve({
   searchParams: { date, partySize },
 }: {
   params: { slug: string };
-  searchParams: { date: string; partySize: string };
+  searchParams: { date: string; partySize: string;  };
 }) {
   const restaurant = await fetchRestaurantBySlug(slug);
   return (
@@ -42,7 +42,11 @@ async function Reserve({
           date={date}
           partySize={partySize}
         />
-        <Form />
+        <Form
+          slug={slug}
+          date={date}
+          partySize={partySize}
+        />
       </div>
     </div>
   );
